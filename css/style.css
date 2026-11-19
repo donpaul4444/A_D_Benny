@@ -263,51 +263,157 @@ img { max-width: 100%; display: block; }
 .news-caption p { font-size: 14px; color: var(--muted); line-height: 1.6; }
 
 /* ===== CONTACT ===== */
-.contact-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 60px; margin-bottom: 48px; }
+.contact-grid {
+  display: grid; grid-template-columns: 1fr 1.4fr; gap: 0;
+  margin-bottom: 48px; border-radius: 8px; overflow: hidden;
+  box-shadow: 0 20px 50px rgba(13, 31, 60, 0.12);
+}
 .contact-info h3, .contact-form-wrap h3 {
-  font-family: var(--font-serif); font-size: 24px;
-  color: var(--navy); margin-bottom: 28px;
+  font-family: var(--font-serif); font-size: 26px;
+  color: var(--navy); margin-bottom: 8px;
 }
+.contact-intro { color: var(--muted); font-size: 14px; line-height: 1.7; margin-bottom: 28px; }
+
+/* Left: dark info panel */
+.contact-info {
+  background: var(--navy); color: var(--white);
+  padding: 48px 40px; position: relative;
+  border-top: 4px solid var(--gold);
+}
+.contact-info h3 { color: var(--white); }
+.contact-info .contact-intro { color: rgba(255,255,255,0.65); }
 .contact-item {
-  display: flex; gap: 16px; margin-bottom: 24px; align-items: flex-start;
+  display: flex; gap: 16px; align-items: flex-start;
+  padding: 18px 0; border-bottom: 1px solid rgba(255,255,255,0.08);
 }
+.contact-item:first-of-type { padding-top: 0; }
 .contact-item i {
-  width: 40px; height: 40px; flex-shrink: 0;
-  background: var(--navy2); color: var(--gold);
+  width: 44px; height: 44px; flex-shrink: 0;
+  background: rgba(201,160,101,0.12); color: var(--gold);
+  border: 1px solid rgba(201,160,101,0.35);
   border-radius: 50%; display: flex; align-items: center; justify-content: center;
-  font-size: 15px; margin-top: 2px;
+  font-size: 16px;
 }
-.contact-item strong { display: block; color: var(--navy); margin-bottom: 4px; font-size: 14px; }
-.contact-item p { color: var(--muted); font-size: 14px; line-height: 1.7; }
-.contact-socials { display: flex; gap: 10px; margin-top: 28px; }
+.contact-item strong {
+  display: block; color: var(--gold); margin-bottom: 4px;
+  font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase;
+}
+.contact-item p { color: rgba(255,255,255,0.85); font-size: 14px; line-height: 1.7; }
+.contact-item a { color: inherit; transition: color 0.2s; }
+.contact-item a:hover { color: var(--gold2); }
+
+.contact-whatsapp {
+  display: inline-flex; align-items: center; gap: 10px;
+  margin-top: 28px; padding: 12px 22px; border-radius: 50px;
+  background: #25d366; color: #fff; font-weight: 600; font-size: 14px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.contact-whatsapp i { font-size: 20px; }
+.contact-whatsapp:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(37,211,102,0.35); }
+
+.contact-socials { display: flex; gap: 10px; margin-top: 24px; }
 .contact-socials a {
   width: 38px; height: 38px;
-  background: var(--navy2); color: var(--white);
+  background: rgba(255,255,255,0.08); color: var(--white);
   border-radius: 50%; display: flex; align-items: center; justify-content: center;
-  font-size: 14px; transition: background 0.25s;
+  font-size: 14px; transition: background 0.25s, color 0.25s;
 }
 .contact-socials a:hover { background: var(--gold); color: var(--navy); }
 
-.contact-form { display: flex; flex-direction: column; gap: 14px; }
-.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+/* Right: form card */
+.contact-form-wrap { background: var(--white); padding: 48px 44px; }
+.contact-form { display: flex; flex-direction: column; gap: 18px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.form-field { display: flex; flex-direction: column; gap: 6px; }
+.form-field label {
+  font-size: 12px; font-weight: 600; color: var(--navy);
+  letter-spacing: 0.8px; text-transform: uppercase;
+}
+.form-field label span { color: var(--gold); }
 .contact-form input,
 .contact-form select,
 .contact-form textarea {
   width: 100%; padding: 13px 16px;
-  border: 1px solid #ddd; border-radius: 3px;
+  border: 1px solid #e2ddd3; border-radius: 6px;
   font-family: var(--font-sans); font-size: 14px; color: var(--text);
-  background: var(--white); transition: border-color 0.25s;
+  background: #fbfaf7; transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
   outline: none;
 }
+.contact-form input::placeholder,
+.contact-form textarea::placeholder { color: #a8a29a; }
 .contact-form input:focus,
 .contact-form select:focus,
-.contact-form textarea:focus { border-color: var(--gold); }
-.contact-form textarea { resize: vertical; }
-.contact-form .btn { align-self: flex-start; }
+.contact-form textarea:focus {
+  border-color: var(--gold); background: var(--white);
+  box-shadow: 0 0 0 3px rgba(201,160,101,0.18);
+}
+.contact-form .is-invalid,
+.contact-form .is-invalid:focus {
+  border-color: #e57373; background: #fff8f8;
+  box-shadow: 0 0 0 3px rgba(229,115,115,0.15);
+}
+.contact-form .is-valid { border-color: #81c784; }
+.field-error { color: #d9534f; font-size: 12px; min-height: 0; }
+.field-error:empty { display: none; }
+.contact-form textarea { resize: vertical; min-height: 130px; }
+.contact-form .btn { align-self: flex-start; padding-left: 36px; padding-right: 36px; border-radius: 6px; }
+.contact-form .btn:disabled { opacity: 0.7; cursor: not-allowed; }
+.form-note { font-size: 12px; color: var(--muted); margin-top: -4px; }
+.form-note i { color: var(--gold); margin-right: 4px; }
+.hp-field { display: none !important; }
+
+/* ===== FLOATING WHATSAPP BUTTON ===== */
+.whatsapp-float {
+  position: fixed; right: 24px; bottom: 24px; z-index: 8000;
+  width: 58px; height: 58px; border-radius: 50%;
+  background: #25d366; color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 30px;
+  box-shadow: 0 6px 20px rgba(37,211,102,0.45);
+  transition: transform 0.25s, box-shadow 0.25s;
+  animation: wa-pop 0.5s ease-out 1s backwards;
+}
+.whatsapp-float::before {          /* soft pulsing ring */
+  content: ''; position: absolute; inset: 0; border-radius: 50%;
+  background: #25d366; z-index: -1;
+  animation: wa-pulse 2.2s ease-out infinite;
+}
+.whatsapp-float:hover { transform: scale(1.08); box-shadow: 0 10px 28px rgba(37,211,102,0.55); }
+.whatsapp-float__tip {
+  position: absolute; right: calc(100% + 12px); top: 50%;
+  transform: translateY(-50%) translateX(6px);
+  background: var(--navy); color: #fff;
+  font-size: 13px; font-weight: 600; white-space: nowrap;
+  padding: 8px 14px; border-radius: 6px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.25s, transform 0.25s;
+}
+.whatsapp-float__tip::before {     /* little arrow pointing at the button */
+  content: ''; position: absolute; left: 100%; top: 50%; transform: translateY(-50%);
+  border: 6px solid transparent; border-left-color: var(--navy);
+}
+.whatsapp-float:hover .whatsapp-float__tip { opacity: 1; transform: translateY(-50%) translateX(0); }
+
+@keyframes wa-pulse {
+  0%   { transform: scale(1);   opacity: 0.6; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+@keyframes wa-pop {
+  from { transform: scale(0); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+@media (max-width: 480px) {
+  .whatsapp-float { right: 16px; bottom: 16px; width: 52px; height: 52px; font-size: 27px; }
+  .whatsapp-float__tip { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .whatsapp-float, .whatsapp-float::before { animation: none; }
+}
 
 /* ===== CONTACT TOAST ===== */
 .contact-toast {
-  position: fixed; bottom: 32px; right: 32px; z-index: 9999;
+  position: fixed; bottom: 100px; right: 24px; z-index: 9999;   /* sits above the WhatsApp button */
   display: flex; align-items: center; gap: 14px;
   padding: 16px 20px; border-radius: 10px;
   box-shadow: 0 8px 32px rgba(0,0,0,0.18);
@@ -479,4 +585,6 @@ img { max-width: 100%; display: block; }
 @media (max-width: 480px) {
   .section { padding: 60px 0; }
   .about-stats { flex-direction: column; align-items: center; gap: 24px; }
+  .contact-info, .contact-form-wrap { padding: 36px 22px; }
+  .contact-form .btn { align-self: stretch; justify-content: center; }
 }

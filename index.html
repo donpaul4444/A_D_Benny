@@ -262,25 +262,27 @@
         <!-- Contact Info -->
         <div class="contact-info">
           <h3>Get In Touch</h3>
+          <p class="contact-intro">Have a legal question? Reach out — we respond to every enquiry within one working day.</p>
+
           <div class="contact-item">
             <i class="fas fa-map-marker-alt"></i>
             <div>
               <strong>Office Address</strong>
-              <p>[Building Name], [Street Name],<br />[City], Kerala — [PIN Code]</p>
+              <p>Adv. A D Benny,<br />Near Thiruvanath Temple Road,<br />Thrissur, Keralam — 680003</p>
             </div>
           </div>
           <div class="contact-item">
             <i class="fas fa-phone-alt"></i>
             <div>
               <strong>Phone</strong>
-              <p>+91 [Phone Number]<br />+91 [Alternate Number]</p>
+              <p><a href="tel:+91XXXXXXXXXX">+91 [Phone Number]</a><br /><a href="tel:+91XXXXXXXXXX">+91 [Alternate Number]</a></p>
             </div>
           </div>
           <div class="contact-item">
             <i class="fas fa-envelope"></i>
             <div>
               <strong>Email</strong>
-              <p>info@adbenny.com<br />adv.adbenny@gmail.com</p>
+              <p><a href="mailto:info@adbenny.com">info@adbenny.com</a><br /><a href="mailto:adv.adbenny@gmail.com">adv.adbenny@gmail.com</a></p>
             </div>
           </div>
           <div class="contact-item">
@@ -290,39 +292,56 @@
               <p>Monday – Saturday: 9:00 AM – 6:00 PM<br />Sunday: Closed</p>
             </div>
           </div>
+
+          <!-- WhatsApp number format: country code + number, no + or spaces -->
+          <a class="contact-whatsapp" href="https://wa.me/916282525215?text=Hello%2C%20I%20would%20like%20to%20enquire%20about%20a%20legal%20matter." target="_blank" rel="noopener">
+            <i class="fab fa-whatsapp"></i> Chat on WhatsApp
+          </a>
+
           <div class="contact-socials">
-            <a href="#"><i class="fab fa-facebook-f"></i></a>
-            <a href="#"><i class="fab fa-twitter"></i></a>
-            <a href="#"><i class="fab fa-linkedin-in"></i></a>
-            <a href="#"><i class="fab fa-whatsapp"></i></a>
+            <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+            <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
           </div>
         </div>
 
         <!-- Contact Form -->
         <div class="contact-form-wrap">
           <h3>Send a Message</h3>
-          <form class="contact-form" id="contactForm" onsubmit="handleForm(event)">
+          <p class="contact-intro">Fill in the form and our team will get back to you shortly.</p>
+          <form class="contact-form" id="contactForm" onsubmit="handleForm(event)" novalidate>
             <input type="hidden" name="access_key" value="bd3d1067-2d0c-47e1-b807-e79bb702b648" />
             <input type="hidden" name="subject" value="New Enquiry — A D Benny Associates Website" />
             <input type="hidden" name="from_name" value="A D Benny Associates Website" />
+            <!-- Spam protection (Web3Forms honeypot) — must stay hidden -->
+            <input type="checkbox" name="botcheck" class="hp-field" tabindex="-1" autocomplete="off" />
+
             <div class="form-row">
-              <input type="text" name="name" placeholder="Your Name" required />
-              <input type="tel" name="phone" placeholder="Phone Number" required />
+              <div class="form-field">
+                <label for="cf-name">Full Name <span>*</span></label>
+                <input id="cf-name" type="text" name="Name" autocomplete="name" required />
+                <small class="field-error"></small>
+              </div>
+              <div class="form-field">
+                <label for="cf-phone">Phone Number <span>*</span></label>
+                <input id="cf-phone" type="tel" name="Phone" inputmode="tel" autocomplete="tel" maxlength="14" required />
+                <small class="field-error"></small>
+              </div>
             </div>
-            <input type="email" name="email" placeholder="Email Address" required />
-            <select name="practice_area">
-              <option value="" disabled selected>Select Practice Area</option>
-              <option>Civil Litigation</option>
-              <option>Criminal Defence</option>
-              <option>Property Law</option>
-              <option>Family Law</option>
-              <option>Corporate &amp; Commercial</option>
-              <option>Legal Drafting &amp; Advisory</option>
-            </select>
-            <textarea name="message" placeholder="Briefly describe your legal matter..." rows="5"></textarea>
+            <div class="form-field">
+              <label for="cf-email">Email Address <span>*</span></label>
+              <input id="cf-email" type="email" name="email" autocomplete="email" required />
+              <small class="field-error"></small>
+            </div>
+            <div class="form-field">
+              <label for="cf-message">Your Message <span>*</span></label>
+              <textarea id="cf-message" name="Message" placeholder="Briefly describe your legal matter..." rows="5" required></textarea>
+              <small class="field-error"></small>
+            </div>
             <button type="submit" class="btn btn-gold" id="contactSubmitBtn">
               Send Message <i class="fas fa-paper-plane"></i>
             </button>
+            <p class="form-note"><i class="fas fa-lock"></i> Your details are kept strictly confidential.</p>
           </form>
         </div>
 
@@ -332,7 +351,7 @@
       <div class="map-wrap">
         <iframe
         
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2332.4679075288027!2d76.188909516353!3d10.52209193489604!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba7ee720116e9fb%3A0xe9cc3f0c5a710fa!2sDistrict%20Collector%20Office%20Thrissur!5e0!3m2!1sen!2sin!4v1777990375106!5m2!1sen!2sin"
+          src="https://maps.google.com/maps?q=Adv.%20AD%20Benny%2C%20Thiruvanath%20Temple%20Road%2C%20Thrissur%2C%20Kerala%20680003&z=16&output=embed"
           width="100%" height="350" style="border:0;" allowfullscreen="" loading="lazy"
           referrerpolicy="no-referrer-when-downgrade" title="Office Location">
         </iframe>
@@ -378,6 +397,15 @@
   </div>
 
   <!-- Firebase SDKs -->
+  <!-- ===== FLOATING WHATSAPP BUTTON ===== -->
+  <!-- WhatsApp number format: country code + number, no + or spaces -->
+  <a class="whatsapp-float"
+     href="https://wa.me/916282525215?text=Hello%2C%20I%20would%20like%20to%20enquire%20about%20a%20legal%20matter."
+     target="_blank" rel="noopener" aria-label="Chat with us on WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+    <span class="whatsapp-float__tip">Chat with us</span>
+  </a>
+
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>

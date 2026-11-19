@@ -47,18 +47,98 @@ function closeLightbox() {
   document.body.style.overflow = '';
 }
 
+// ===== CONTACT FORM VALIDATION =====
+const PHONE_RE = /^(?:\+91|91|0)?[6-9]\d{9}$/;          // Indian mobile: 10 digits starting 6–9
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i;        // name@domain.tld
+
+const validators = {
+  'cf-name': v => {
+    if (!v) return 'Please enter your name.';
+    if (v.length < 2) return 'Name is too short.';
+    if (!/^[a-zA-Z .'-]+$/.test(v)) return 'Name can only contain letters.';
+    return '';
+  },
+  'cf-phone': v => {
+    if (!v) return 'Please enter your mobile number.';
+    const num = v.replace(/[\s-]/g, '');
+    if (PHONE_RE.test(num)) return '';
+    const digits = num.replace(/^(\+91|91(?=\d{10}$)|0(?=\d{10}$))/, '').replace(/\D/g, '');
+    if (digits.length < 10) return `Mobile number must be 10 digits (${digits.length} entered).`;
+    if (digits.length > 10) return 'Mobile number has too many digits.';
+    if (!/^[6-9]/.test(digits)) return 'Mobile number should start with 6, 7, 8 or 9.';
+    return 'Enter a valid 10-digit mobile number.';
+  },
+  'cf-email': v => {
+    if (!v) return 'Please enter your email address.';
+    if (!EMAIL_RE.test(v)) return 'Enter a valid email address (e.g. name@gmail.com).';
+    return '';
+  },
+  'cf-message': v => {
+    if (!v) return 'Please enter your message.';
+    if (v.length < 10) return 'Message is too short — please add a few more details.';
+    return '';
+  },
+};
+
+function validateField(input) {
+  const msg = validators[input.id](input.value.trim());
+  const errorEl = input.parentElement.querySelector('.field-error');
+  input.classList.toggle('is-invalid', !!msg);
+  input.classList.toggle('is-valid', !msg);
+  if (errorEl) errorEl.textContent = msg;
+  return !msg;
+}
+
+function clearField(input) {
+  input.classList.remove('is-invalid', 'is-valid');
+  const errorEl = input.parentElement.querySelector('.field-error');
+  if (errorEl) errorEl.textContent = '';
+}
+
+function validateForm() {
+  let firstInvalid = null;
+  Object.keys(validators).forEach(id => {
+    const input = document.getElementById(id);
+    if (!validateField(input) && !firstInvalid) firstInvalid = input;
+  });
+  if (firstInvalid) firstInvalid.focus();
+  return !firstInvalid;
+}
+
+Object.keys(validators).forEach(id => {
+  const input = document.getElementById(id);
+  if (!input) return;
+  // check when the user leaves the field; re-check live once an error is shown
+  input.addEventListener('blur', () => { if (input.value.trim()) validateField(input); });
+  input.addEventListener('input', () => {
+    if (!input.value.trim()) return clearField(input);            // emptied: reset quietly
+    if (input.classList.contains('is-invalid')) validateField(input);
+  });
+});
+
+// phone: allow only digits, +, space and hyphen while typing
+const phoneInput = document.getElementById('cf-phone');
+if (phoneInput) {
+  phoneInput.addEventListener('input', () => {
+    phoneInput.value = phoneInput.value.replace(/[^\d+\s-]/g, '');
+  });
+}
+
 // ===== CONTACT FORM =====
 async function handleForm(e) {
   e.preventDefault();
   const form    = document.getElementById('contactForm');
   const btn     = document.getElementById('contactSubmitBtn');
-  const success = document.getElementById('formSuccess');
+
+  if (!validateForm()) return;
 
   btn.disabled  = true;
   btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
 
   try {
     const data = new FormData(form);
+    // Subject shown in the inbox, e.g. "New Enquiry from Rahul"
+    data.set('subject', `New Enquiry from ${data.get('Name')}`);
     const res  = await fetch('https://api.web3forms.com/submit', {
       method: 'POST',
       body: data
@@ -67,6 +147,7 @@ async function handleForm(e) {
 
     if (json.success) {
       form.reset();
+      form.querySelectorAll('.is-valid, .is-invalid').forEach(el => el.classList.remove('is-valid', 'is-invalid'));
       btn.disabled  = false;
       btn.innerHTML = 'Send Message <i class="fas fa-paper-plane"></i>';
       showContactToast();
