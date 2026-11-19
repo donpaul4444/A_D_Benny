@@ -53,6 +53,9 @@
       <button class="tab-btn" data-tab="blog">
         <i class="fas fa-pen-nib"></i> Blog Posts
       </button>
+      <button class="tab-btn" data-tab="videos">
+        <i class="fab fa-youtube"></i> YouTube Videos
+      </button>
     </div>
 
     <div class="admin-body">
@@ -95,6 +98,10 @@
           <!-- Existing News List -->
           <div class="panel-card">
             <h2><i class="fas fa-images"></i> Published Cuttings</h2>
+            <div class="sample-tools">
+              <button type="button" class="btn-edit" onclick="addSamples('news')"><i class="fas fa-magic"></i> Add 7 samples</button>
+              <button type="button" class="btn-delete" onclick="removeSamples('news')"><i class="fas fa-broom"></i> Remove samples</button>
+            </div>
             <div id="newsList" class="item-list">
               <div class="loading-state"><i class="fas fa-spinner fa-spin"></i> Loading...</div>
             </div>
@@ -145,7 +152,49 @@
           <!-- Existing Blog List -->
           <div class="panel-card">
             <h2><i class="fas fa-list-alt"></i> Published Blog Posts</h2>
+            <div class="sample-tools">
+              <button type="button" class="btn-edit" onclick="addSamples('blogs')"><i class="fas fa-magic"></i> Add 7 samples</button>
+              <button type="button" class="btn-delete" onclick="removeSamples('blogs')"><i class="fas fa-broom"></i> Remove samples</button>
+            </div>
             <div id="blogList" class="item-list">
+              <div class="loading-state"><i class="fas fa-spinner fa-spin"></i> Loading...</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ===== VIDEOS TAB ===== -->
+      <div id="tab-videos" class="tab-content hidden">
+        <div class="admin-panel">
+
+          <!-- Add Video Form -->
+          <div class="panel-card">
+            <h2><i class="fas fa-plus-circle"></i> Add YouTube Video</h2>
+            <form id="videoForm">
+              <div class="form-group">
+                <label>YouTube Link</label>
+                <input type="url" id="videoUrl" placeholder="Paste the YouTube link here" required />
+              </div>
+              <div class="video-preview hidden" id="videoPreview">
+                <img id="videoPreviewImg" alt="Video thumbnail" />
+                <span><i class="fas fa-check-circle"></i> Video found</span>
+              </div>
+              <div class="form-group">
+                <label>Title</label>
+                <input type="text" id="videoTitle" placeholder="Short title shown on the website" required />
+              </div>
+              <button type="submit" class="btn-primary" id="videoSubmitBtn">
+                <i class="fab fa-youtube"></i> Add Video
+              </button>
+              <p class="form-hint">Works with links like youtube.com/watch?v=…, youtu.be/…, and YouTube Shorts.</p>
+            </form>
+          </div>
+
+          <!-- Existing Videos List -->
+          <div class="panel-card">
+            <h2><i class="fas fa-film"></i> Published Videos</h2>
+            <div id="videoList" class="item-list">
               <div class="loading-state"><i class="fas fa-spinner fa-spin"></i> Loading...</div>
             </div>
           </div>

@@ -47,6 +47,51 @@ function closeLightbox() {
   document.body.style.overflow = '';
 }
 
+// ===== BAR COUNCIL DISCLAIMER (once per visitor) =====
+(function () {
+  const modal = document.getElementById('disclaimerModal');
+  const agree = document.getElementById('disclaimerAgree');
+  if (!modal || !agree) return;
+
+  let accepted = false;
+  try { accepted = localStorage.getItem('bciDisclaimerAccepted') === 'yes'; } catch (e) {}
+  if (accepted) return;
+
+  modal.hidden = false;
+  document.body.style.overflow = 'hidden';
+  agree.focus();
+
+  agree.addEventListener('click', () => {
+    try { localStorage.setItem('bciDisclaimerAccepted', 'yes'); } catch (e) {}
+    modal.classList.add('closing');
+    document.body.style.overflow = '';
+    setTimeout(() => { modal.hidden = true; }, 250);
+  });
+})();
+
+// ===== GENTLE FADE-IN ON SCROLL =====
+(function () {
+  const targets = document.querySelectorAll(
+    '.section-header, .about-text, .about-image, .practice-card, .profile, .contact-grid, .map-wrap'
+  );
+  if (!('IntersectionObserver' in window) ||
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  targets.forEach(el => el.classList.add('reveal'));
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('visible');
+      io.unobserve(entry.target);
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+  targets.forEach(el => io.observe(el));
+})();
+
+// ===== FOOTER YEAR =====
+const yearEl = document.getElementById('year');
+if (yearEl) yearEl.textContent = new Date().getFullYear();
+
 // ===== CONTACT FORM VALIDATION =====
 const PHONE_RE = /^(?:\+91|91|0)?[6-9]\d{9}$/;          // Indian mobile: 10 digits starting 6–9
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i;        // name@domain.tld
@@ -188,29 +233,15 @@ function showContactToast(type = 'success') {
   setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 400); }, 5000);
 }
 
-// ===== SCROLL REVEAL (simple fade-in) =====
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('visible');
-      observer.unobserve(entry.target);
-    }
+// ===== ABOUT: "Read more" (phones only — the button is hidden on desktop) =====
+const aboutMore = document.getElementById('aboutReadMore');
+if (aboutMore) {
+  aboutMore.addEventListener('click', () => {
+    const text = aboutMore.closest('.about-text');
+    const open = text.classList.toggle('expanded');
+    aboutMore.setAttribute('aria-expanded', open);
+    aboutMore.innerHTML = open
+      ? 'Show less <i class="fas fa-chevron-up"></i>'
+      : 'Read more <i class="fas fa-chevron-down"></i>';
   });
-}, { threshold: 0.1 });
-
-document.querySelectorAll(
-  '.practice-card, .team-card, .news-card, .about-text, .about-image, .contact-info, .contact-form-wrap'
-).forEach(el => {
-  el.style.opacity = '0';
-  el.style.transform = 'translateY(30px)';
-  el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-  observer.observe(el);
-});
-
-document.addEventListener('DOMContentLoaded', () => {
-  document.head.insertAdjacentHTML('beforeend', `
-    <style>
-      .visible { opacity: 1 !important; transform: translateY(0) !important; }
-    </style>
-  `);
-});
+}

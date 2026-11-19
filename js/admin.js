@@ -36,6 +36,7 @@ function showDashboard(user) {
   document.getElementById('adminAvatar').src = user.photoURL || '';
   loadNews();
   loadBlogs();
+  loadVideos();
 }
 
 // ===== TABS =====
@@ -335,6 +336,173 @@ async function deleteBlog(id, imagePath) {
     loadBlogs();
   } catch (err) {
     showToast('Delete failed: ' + err.message, 'error');
+  }
+}
+
+// ===== YOUTUBE VIDEOS =====
+// Pulls the 11-character video ID out of any common YouTube link
+function getYouTubeId(url) {
+  const m = String(url).trim().match(
+    /(?:youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|live\/|v\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/
+  );
+  return m ? m[1] : null;
+}
+
+const videoUrlInput = document.getElementById('videoUrl');
+videoUrlInput.addEventListener('input', () => {
+  const id      = getYouTubeId(videoUrlInput.value);
+  const preview = document.getElementById('videoPreview');
+  if (id) {
+    document.getElementById('videoPreviewImg').src = `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
+    preview.classList.remove('hidden');
+  } else {
+    preview.classList.add('hidden');
+  }
+});
+
+document.getElementById('videoForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const videoId = getYouTubeId(videoUrlInput.value);
+  const title   = document.getElementById('videoTitle').value.trim();
+  if (!videoId) { showToast('That does not look like a YouTube link.', 'error'); return; }
+  if (!title)   { showToast('Please enter a title.', 'error'); return; }
+
+  const btn = document.getElementById('videoSubmitBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
+  try {
+    await db.collection('videos').add({
+      videoId, title,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    showToast('Video added!', 'success');
+    e.target.reset();
+    document.getElementById('videoPreview').classList.add('hidden');
+    loadVideos();
+  } catch (err) {
+    showToast('Failed: ' + err.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fab fa-youtube"></i> Add Video';
+  }
+});
+
+async function loadVideos() {
+  const list = document.getElementById('videoList');
+  list.innerHTML = '<div class="loading-state"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
+  try {
+    let snap;
+    try { snap = await db.collection('videos').orderBy('createdAt', 'desc').get(); }
+    catch (e) { snap = await db.collection('videos').get(); }
+    if (snap.empty) {
+      list.innerHTML = '<div class="empty-state"><i class="fab fa-youtube"></i><p>No videos yet. Add the first one!</p></div>';
+      return;
+    }
+    list.innerHTML = '';
+    snap.forEach(doc => {
+      const d = doc.data();
+      list.insertAdjacentHTML('beforeend', `
+        <div class="news-item">
+          <a href="https://www.youtube.com/watch?v=${d.videoId}" target="_blank" rel="noopener">
+            <img class="news-item-img" src="https://i.ytimg.com/vi/${d.videoId}/mqdefault.jpg" alt="" />
+          </a>
+          <div class="news-item-info">
+            <div class="news-item-source">YouTube</div>
+            <div class="news-item-caption">${d.title}</div>
+          </div>
+          <button class="btn-delete" onclick="deleteVideo('${doc.id}')">
+            <i class="fas fa-trash"></i> Delete
+          </button>
+        </div>
+      `);
+    });
+  } catch (err) {
+    list.innerHTML = '<div class="empty-state"><p>Error loading videos.</p></div>';
+  }
+}
+
+async function deleteVideo(id) {
+  if (!confirm('Remove this video from the website?')) return;
+  try {
+    await db.collection('videos').doc(id).delete();
+    showToast('Video removed.', 'success');
+    loadVideos();
+  } catch (err) {
+    showToast('Delete failed: ' + err.message, 'error');
+  }
+}
+
+// ===== SAMPLE DATA (for testing the layout) =====
+// Samples are tagged `sample: true` so "Remove samples" deletes only them.
+const SAMPLE_BLOGS = [
+  ['Understanding Bail: Your Rights After an Arrest', 'An overview of regular and anticipatory bail, when to apply, and what courts consider.'],
+  ['Buying Property in Kerala: A Title Verification Checklist', 'Key documents to check before buying land — title deeds, encumbrance certificate, tax receipts and more.'],
+  ['Mutual Consent Divorce: Process and Timeline', 'How a mutual consent divorce works under Indian law, the waiting period, and documents needed.'],
+  ['Consumer Complaints: When and How to Approach the Commission', 'Your rights as a consumer and the steps to file a complaint before the Consumer Disputes Redressal Commission.'],
+  ['Writing a Valid Will: Common Mistakes to Avoid', 'Simple guidance on drafting, witnessing and registering a will so it holds up in the future.'],
+  ['Cheque Bounce Cases Under Section 138', 'What to do when a cheque is dishonoured — notice period, timelines and the court process.'],
+  ['Rental Agreements: Protecting Landlords and Tenants', 'Essential clauses every lease or rental agreement in Kerala should include.'],
+];
+const SAMPLE_NEWS = [
+  ['Malayala Manorama', 'Adv. A D Benny speaks on legal awareness for senior citizens', 'March 2026'],
+  ['Mathrubhumi', 'Legal aid camp conducted in Thrissur', 'February 2026'],
+  ['The Hindu', 'High Court ruling in landmark property dispute', 'January 2026'],
+  ['Deshabhimani', 'Awareness session on consumer rights', 'December 2025'],
+  ['Kerala Kaumudi', 'Free legal consultation drive for women', 'November 2025'],
+  ['Deepika', 'Seminar on cyber law and online fraud', 'October 2025'],
+  ['Madhyamam', 'Interview: two decades of practice at the Bar', 'September 2025'],
+];
+
+async function addSamples(kind) {
+  if (!confirm('Add 7 sample items? You can remove them later with "Remove samples".')) return;
+  try {
+    const col  = db.collection(kind);
+    const one  = await col.limit(1).get();
+    const base = one.empty ? {} : one.docs[0].data();       // reuse an existing image
+    if (kind === 'news' && !base.imageUrl) {
+      showToast('Upload at least one real cutting first — samples reuse its image.', 'error');
+      return;
+    }
+
+    const batch = db.batch();
+    const day   = 24 * 60 * 60 * 1000;
+    const list  = kind === 'blogs' ? SAMPLE_BLOGS : SAMPLE_NEWS;
+    list.forEach((s, i) => {
+      // dated in the past so real posts stay at the top
+      const createdAt = firebase.firestore.Timestamp.fromMillis(Date.now() - (i + 30) * day);
+      const common = { imageUrl: base.imageUrl || '', imagePath: base.imagePath || '', sample: true, createdAt };
+      if (kind === 'blogs') {
+        const [title, excerpt] = s;
+        batch.set(col.doc(), {
+          ...common, title, excerpt,
+          content: `<p><em>Sample post.</em></p><p>${excerpt}</p><h3>Key points</h3><ul><li>Point one</li><li>Point two</li><li>Point three</li></ul>`,
+          date: createdAt.toDate().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }),
+        });
+      } else {
+        const [source, caption, date] = s;
+        batch.set(col.doc(), { ...common, source, caption, date });
+      }
+    });
+    await batch.commit();
+    showToast('7 samples added.', 'success');
+    kind === 'blogs' ? loadBlogs() : loadNews();
+  } catch (err) {
+    showToast('Could not add samples: ' + err.message, 'error');
+  }
+}
+
+async function removeSamples(kind) {
+  if (!confirm('Delete all sample items? Your real posts will not be touched.')) return;
+  try {
+    const snap = await db.collection(kind).where('sample', '==', true).get();
+    if (snap.empty) { showToast('No samples to remove.', 'success'); return; }
+    const batch = db.batch();
+    snap.forEach(doc => batch.delete(doc.ref));
+    await batch.commit();
+    showToast(`${snap.size} samples removed.`, 'success');
+    kind === 'blogs' ? loadBlogs() : loadNews();
+  } catch (err) {
+    showToast('Could not remove samples: ' + err.message, 'error');
   }
 }
 
