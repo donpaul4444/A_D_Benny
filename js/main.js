@@ -48,20 +48,63 @@ function closeLightbox() {
 }
 
 // ===== CONTACT FORM =====
-function handleForm(e) {
+async function handleForm(e) {
   e.preventDefault();
-  const btn = e.target.querySelector('button[type="submit"]');
-  btn.textContent = 'Message Sent!';
-  btn.style.background = '#2ecc71';
-  btn.style.borderColor = '#2ecc71';
-  btn.style.color = '#fff';
-  setTimeout(() => {
+  const form    = document.getElementById('contactForm');
+  const btn     = document.getElementById('contactSubmitBtn');
+  const success = document.getElementById('formSuccess');
+
+  btn.disabled  = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+
+  try {
+    const data = new FormData(form);
+    const res  = await fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      body: data
+    });
+    const json = await res.json();
+
+    if (json.success) {
+      form.reset();
+      btn.disabled  = false;
+      btn.innerHTML = 'Send Message <i class="fas fa-paper-plane"></i>';
+      showContactToast();
+    } else {
+      throw new Error(json.message || 'Submission failed');
+    }
+  } catch (err) {
+    btn.disabled  = false;
     btn.innerHTML = 'Send Message <i class="fas fa-paper-plane"></i>';
-    btn.style.background = '';
-    btn.style.borderColor = '';
-    btn.style.color = '';
-    e.target.reset();
-  }, 3000);
+    showContactToast('error');
+  }
+}
+
+// ===== CONTACT TOAST =====
+function showContactToast(type = 'success') {
+  const existing = document.getElementById('contactToast');
+  if (existing) existing.remove();
+
+  const toast = document.createElement('div');
+  toast.id = 'contactToast';
+  toast.className = `contact-toast contact-toast--${type}`;
+  toast.innerHTML = type === 'success'
+    ? `<i class="fas fa-check-circle"></i>
+       <div>
+         <strong>Message Sent!</strong>
+         <span>We'll get back to you shortly.</span>
+       </div>
+       <button onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>`
+    : `<i class="fas fa-exclamation-circle"></i>
+       <div>
+         <strong>Failed to send</strong>
+         <span>Please call us directly.</span>
+       </div>
+       <button onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>`;
+
+  document.body.appendChild(toast);
+  setTimeout(() => toast.classList.add('show'), 10);
+  setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 400); }, 5000);
 }
 
 // ===== SCROLL REVEAL (simple fade-in) =====
