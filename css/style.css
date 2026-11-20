@@ -838,7 +838,7 @@ img { max-width: 100%; display: block; }
 /* =====================================================
    MOBILE-ONLY ELEMENTS (hidden on desktop)
    ===================================================== */
-.read-more, .contact-quick, .mobile-bar, .profile-open { display: none; }
+.read-more, .contact-quick, .profile-open { display: none; }
 
 /* Advocate profile sheet (opened from "View Profile" on phones) */
 .profile-sheet { position: fixed; inset: 0; z-index: 10001; visibility: hidden; pointer-events: none; }
@@ -980,25 +980,9 @@ img { max-width: 100%; display: block; }
   .footer-brand p { margin-top: 6px; }
   .footer-disclaimer p { font-size: 11px; line-height: 1.7; }
 
-  /* ---- 8. Bottom action bar (replaces floating WhatsApp) ---- */
-  .whatsapp-float { display: none; }
-  body { padding-bottom: calc(60px + env(safe-area-inset-bottom)); }
-  .mobile-bar {
-    display: grid; grid-template-columns: repeat(3, 1fr);
-    position: fixed; left: 0; right: 0; bottom: 0; z-index: 8500;
-    background: var(--navy); border-top: 1px solid rgba(176,138,82,0.3);
-    padding-bottom: env(safe-area-inset-bottom);
-    box-shadow: 0 -4px 20px rgba(0,0,0,0.2);
-  }
-  .mobile-bar a {
-    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
-    height: 60px; color: var(--white); font-size: 11px; font-weight: 600; letter-spacing: 0.5px;
-  }
-  .mobile-bar a i { font-size: 18px; color: var(--gold); }
-  .mobile-bar a + a { border-left: 1px solid rgba(255,255,255,0.08); }
-  .mobile-bar__wa { background: #25d366; }
-  .mobile-bar__wa i { color: #fff !important; }
-  .contact-toast { left: 12px; right: 12px; bottom: calc(76px + env(safe-area-inset-bottom)); min-width: 0; max-width: none; }
+  /* ---- 8. Floating WhatsApp button (same as desktop), clear of the iPhone home bar ---- */
+  .whatsapp-float { bottom: calc(16px + env(safe-area-inset-bottom)); }
+  .contact-toast { left: 12px; right: 12px; bottom: calc(84px + env(safe-area-inset-bottom)); min-width: 0; max-width: none; }
 }
 
 /* =====================================================
@@ -1099,9 +1083,15 @@ img { max-width: 100%; display: block; }
 .hero-photo--group { max-width: 620px; }
 .hero-photo--group .hero-photo-frame { aspect-ratio: 3 / 2.3; }
 .hero-photo--group .hero-photo-frame img { object-position: center 30%; }
+@media (max-width: 1024px) {
+  .hero-split .hero-grid { gap: 40px; }
+}
 @media (max-width: 768px) {
+  .hero-split .hero-grid { grid-template-columns: minmax(0, 1fr); gap: 26px; }
+  .hero-text, .hero-photo { min-width: 0; }
   .hero-photo--group { max-width: none; }
   .hero-photo--group .hero-photo-frame { aspect-ratio: 16 / 10; border-radius: 8px; }
+  .hero-split .hero-facts { display: none; }   /* court pills: desktop only */
 }
 
 /* =====================================================

@@ -19,7 +19,6 @@ const ADVOCATES = [
     courts:       ['Kerala High Court', 'District Court Ernakulam', 'Family Court'],
     email:        'rahul.menon@example.com',
     phone:        '+91 98XXX XXXXX',
-    linkedin:     'https://www.linkedin.com/in/rahul-menon',
   },
   {
     name:         'Adv. Edbeel Benny',
@@ -34,7 +33,6 @@ const ADVOCATES = [
     courts:       ['Kerala High Court', 'District Court Ernakulam', 'Family Court'],
     email:        'rahul.menon@example.com',
     phone:        '+91 98XXX XXXXX',
-    linkedin:     'https://www.linkedin.com/in/rahul-menon',
   },
   {
     name:         'Adv. Anna Edbeel',
@@ -49,7 +47,6 @@ const ADVOCATES = [
     courts:       ['Kerala High Court', 'District Court Ernakulam', 'Family Court'],
     email:        'rahul.menon@example.com',
     phone:        '+91 98XXX XXXXX',
-    linkedin:     'https://www.linkedin.com/in/rahul-menon',
   },
   {
     name:         'Adv. Edweena Benny',
@@ -64,7 +61,6 @@ const ADVOCATES = [
     courts:       ['Kerala High Court', 'District Court Ernakulam', 'Family Court'],
     email:        'rahul.menon@example.com',
     phone:        '+91 98XXX XXXXX',
-    linkedin:     'https://www.linkedin.com/in/rahul-menon',
   },
 ];
 
@@ -91,9 +87,7 @@ const ADVOCATES = [
 
     const contacts = [
       has(a.email)    && `<a href="mailto:${esc(a.email)}" aria-label="Email ${esc(a.name)}"><i class="fas fa-envelope"></i> Email</a>`,
-      has(a.phone)    && `<a href="tel:${esc(a.phone.replace(/\s/g, ''))}" aria-label="Call ${esc(a.name)}"><i class="fas fa-phone-alt"></i> Call</a>`,
-      has(a.linkedin) && `<a href="${esc(a.linkedin)}" target="_blank" rel="noopener" aria-label="${esc(a.name)} on LinkedIn"><i class="fab fa-linkedin-in"></i> LinkedIn</a>`,
-    ].filter(Boolean);
+      has(a.phone)    && `<a href="tel:${esc(a.phone.replace(/\s/g, ''))}" aria-label="Call ${esc(a.name)}"><i class="fas fa-phone-alt"></i> Call</a>`,    ].filter(Boolean);
 
     return `
       <article class="profile ${i % 2 ? 'profile--reverse' : ''}">
