@@ -6,7 +6,7 @@ const CLOUDINARY_PRESET = 'AD BEnny Photos';
 const provider = new firebase.auth.GoogleAuthProvider();
 
 auth.onAuthStateChanged(user => {
-  if (user && user.email === ADMIN_EMAIL) {
+  if (user && ADMIN_EMAILS.includes(user.email)) {
     showDashboard(user);
   } else if (user) {
     auth.signOut();
@@ -110,7 +110,7 @@ document.getElementById('newsForm').addEventListener('submit', async e => {
   btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
 
   try {
-    const { url, path } = await uploadImage(file, 'news');
+    const { url, path } = await uploadImage(file, 'ad-benny/news');
     await db.collection('news').add({
       imageUrl:  url,
       imagePath: path,
@@ -200,7 +200,7 @@ document.getElementById('blogForm').addEventListener('submit', async e => {
     let imagePath = editingImagePath;
     const imageFile = document.getElementById('blogImageInput').files[0];
     if (imageFile) {
-      const uploaded = await uploadImage(imageFile, 'blog');
+      const uploaded = await uploadImage(imageFile, 'ad-benny/blog');
       imageUrl  = uploaded.url;
       imagePath = uploaded.path;
     }

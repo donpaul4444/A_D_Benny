@@ -13,7 +13,11 @@ const firebaseConfig = {
 
 
 // Only this Google account can access the admin panel — put Benny's Gmail here
-const ADMIN_EMAIL = "donpaul4444@gmail.com";
+// Google accounts allowed into the admin panel (developer + client).
+// Must match the list in Firestore Rules (Firebase Console → Firestore → Rules).
+const ADMIN_EMAILS = [
+  "donpaul4444@gmail.com",
+];
 
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
